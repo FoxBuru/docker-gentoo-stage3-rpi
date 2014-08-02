@@ -3,14 +3,14 @@ set -e
 
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
-stage3="$(wget -qO- 'http://distfiles.gentoo.org/releases/amd64/autobuilds/latest-stage3-amd64.txt' | tail -n1)"
+stage3="$(wget -qO- 'http://distfiles.gentoo.org/releases/arm/autobuilds/latest-stage3-armv6j_hardfp.txt' | tail -n1)"
 
 if [ -z "$stage3" ]; then
 	echo >&2 'wtf failure'
 	exit 1
 fi
 
-url="http://distfiles.gentoo.org/releases/amd64/autobuilds/$stage3"
+url="http://distfiles.gentoo.org/releases/arm/autobuilds/$stage3"
 name="$(basename "$stage3")"
 
 ( set -x; wget -N "$url" )
@@ -46,6 +46,6 @@ echo 'CMD ["/bin/bash"]' >> Dockerfile
 
 user="$(docker info | awk '/^Username:/ { print $2 }')"
 [ -z "$user" ] || user="$user/"
-( set -x; docker build -t "${user}gentoo-stage3" . )
+( set -x; docker build -t "${user}rpi-gentoo-stage3" . )
 
 ( set -x; git add Dockerfile "$xz" )
