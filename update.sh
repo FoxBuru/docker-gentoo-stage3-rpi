@@ -48,4 +48,13 @@ user="$(docker info | awk '/^Username:/ { print $2 }')"
 [ -z "$user" ] || user="$user/"
 ( set -x; docker build -t "${user}rpi-gentoo-stage3" . )
 
-( set -x; git add Dockerfile "$xz" )
+# Quick n' dirty solution
+git add Dockerfile "$xz" && \
+git commit -m "New version - $base" && \
+git checkout master && \
+git merge script -m "New version - $base" && \
+git checkout script && \
+git reset --hard HEAD^1 && \
+git checkout master && \
+echo "Git structure prepared correctly" || \
+echo "An error was found. Please check it manually"
