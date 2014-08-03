@@ -20,7 +20,14 @@ image="gentoo-temp:$base"
 container="gentoo-temp-$base"
 
 # bzcat thanks to https://code.google.com/p/go/issues/detail?id=7279
-( set -x; bzcat -p "$name" | docker import - "$image" )
+#
+# -p parameter doesn't seem standard. A simple test would allow us
+# to check building os. Defaults to Gentoo.
+bzcat_bin=$(which bzcat 2>/dev/null)
+
+test $(lsb_release -a | grep ID | awk 'BEGIN{FS=":"}{print $2;}'|tr -d "\t") != "Gentoo" && bzcat_line="${bzcat_bin}" || bzcat_line="${bzcat_bin} -p"
+
+( set -x; ${bzcat_line} "$name" | docker import - "$image" )
 
 docker rm -f "$container" > /dev/null 2>&1 || true
 ( set -x; docker run -t -v /usr/portage:/usr/portage:ro --name "$container" "$image" bash -exc $'
