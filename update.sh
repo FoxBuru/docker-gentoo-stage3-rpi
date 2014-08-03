@@ -25,11 +25,13 @@ container="gentoo-temp-$base"
 # to check building os. Defaults to Gentoo.
 bzcat_bin=$(which bzcat 2>/dev/null)
 bzcat_line="${bzcat_bin} -p"
-test $(lsb_release -a | grep ID | awk 'BEGIN{FS=":"}{print $2;}'|tr -d "\t") = "Gentoo"
+
+test $(lsb_release -a | grep ID | awk 'BEGIN{FS=":"}{print $2;}'|tr -d "\t") = "Gentoo" || true
+
 if [ $? -eq 1 ]; then
 	bzcat_line="bzcat"
 fi
-	
+
 ( set -x; ${bzcat_line} "$name" | docker import - "$image" )
 
 docker rm -f "$container" > /dev/null 2>&1 || true
