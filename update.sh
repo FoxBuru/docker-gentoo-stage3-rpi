@@ -24,9 +24,8 @@ container="gentoo-temp-$base"
 # -p parameter doesn't seem standard. A simple test would allow us
 # to check building os. Defaults to Gentoo.
 bzcat_bin=$(which bzcat 2>/dev/null)
-bzcat_line="${bzcat_bin} -p"
 
-( test $(lsb_release -a | grep ID | awk 'BEGIN{FS=":"}{print $2;}'|tr -d "\t") = "Gentoo" && bzcat_line="bzcat" ) || true
+( test $(lsb_release -a | grep ID | awk 'BEGIN{FS=":"}{print $2;}'|tr -d "\t") = "Gentoo" && bzcat_line="${bzcat_bin} -p" || bzcat_line="${bzcat_bin}") || true
 
 ( set -x; ${bzcat_line} "$name" | docker import - "$image" )
 
