@@ -26,11 +26,7 @@ container="gentoo-temp-$base"
 bzcat_bin=$(which bzcat 2>/dev/null)
 bzcat_line="${bzcat_bin} -p"
 
-test $(lsb_release -a | grep ID | awk 'BEGIN{FS=":"}{print $2;}'|tr -d "\t") = "Gentoo" || true
-
-if [ $? -eq 1 ]; then
-	bzcat_line="bzcat"
-fi
+( test $(lsb_release -a | grep ID | awk 'BEGIN{FS=":"}{print $2;}'|tr -d "\t") = "Gentoo" && bzcat_line="bzcat" ) || true
 
 ( set -x; ${bzcat_line} "$name" | docker import - "$image" )
 
